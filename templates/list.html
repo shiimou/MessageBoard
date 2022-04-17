@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}留言列表{% endblock %}
+
+{% block content %}
+<div>
+    <!-- 遍历留言信息 -->
+    {% for message in allmessages %}
+        <div>
+            <a class="turn_link message_list" href="/detail/?pk={{ message.id }}">{{ message.title }}
+            </a>
+
+            <div>
+                作者：<span style="color: #208cff">{{ message.author }}</span>&ensp;&ensp;&ensp;创建时间：<span
+                    style="color: #208cff">{{ message.create_time }}</span>
+            </div>
+            <div>
+                {{ message.content }}
+            </div>
+            <div style="border-bottom: 1px solid;border-bottom-color: #3c3c3c;margin: 5px auto;"></div>
+        </div>
+    {% endfor %}
+</div>
+<!-- 分页 -->
+<div class="page">
+    {% if allmessages.has_previous %}
+        <a href="?page={{ allmessages.previous_page_number }}">上一页</a>
+    {% else %}
+        <a href="javascript:;">上一页</a>
+    {% endif %}
+
+    {% for page in allmessages.paginator.page_range %}
+        {% ifequal page allmessages.number %}
+            <span class='current'>{{ page }}</span>
+        {% else %}
+            <a href="?page={{ page }}">{{ page }}</a>
+        {% endifequal %}
+    {% endfor %}
+    {% if allmessages.has_next %}
+        <a href="?page={{ allmessages.next_page_number }}">下一页</a>
+    {% else %}
+        <a href="javascript:;">下一页</a>
+    {% endif %}
+</div>
+
+{% endblock %}
+

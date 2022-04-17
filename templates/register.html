@@ -1,0 +1,76 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 页面标签页显示的抬头 -->
+    <title>注册页面</title>
+    <link href="{% static 'css\bootstrap.min.css' %}"  rel="stylesheet">
+    <link href="{% static 'css\main.css' %}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="register">
+        <div class="container_in" style="margin-top:40px;">
+            <div class="col_1">
+                &ensp;&ensp;注册
+                <span class="error_msg" id="error_msg"></span>
+            </div>
+             <!-- 注册form表单 start -->
+            <form id="form_data" method="post">
+                <div class="input-group input_group">
+                    <span class="input-group-addon" style="width: 40%;">用户名</span>
+                    <input type="text" class="form-control" id="id_username" placeholder="请输入用户名"
+                           aria-describedby="sizing-addon2" style="width: 130%" name="username">
+
+                </div>
+                <div class="input-group input_group">
+                    <span class="input-group-addon" id="sizing-addon2" style="width: 40%">密码</span>
+                    <input type="password" class="form-control" id="id_password" placeholder="请输入密码"
+                           aria-describedby="sizing-addon2" style="width: 130%" name="password">
+                </div>
+                <div class="input-group input_group">
+                    <span class="input-group-addon" id="sizing-addon2" style="width: 40%">确认密码</span>
+                    <input type="password" class="form-control" id="id_password_" placeholder="请再次输入密码"
+                           aria-describedby="sizing-addon2" style="width: 130%" name="password_">
+                </div>
+
+                <div>
+                    <input type="submit" id="btn_submit" class="btn btn_register" value="注册">
+                </div>
+                <div style="float: left;margin-top: 20px">
+                    <a href="{% url 'login' %}" class="turn_link">已有账号，点击登录...</a>
+                </div>
+                <!-- 用于处理csrf验证 -->
+                {% csrf_token %}
+            </form>
+            <!-- 注册form表单 end -->
+        </div>
+    </div>
+</div>
+<script src="{% static 'js\jquery-3.4.1.min.js' %}"></script>
+<script src="{% static 'js\bootstrap.min.js' %}"></script>
+<script>
+    $('#btn_submit').on('click', function () {
+        // post方式将form表单内容提交至后台
+        $.ajax({
+            url: "/register/", // 提交的路由
+            type: "POST",  // post方式
+            data: $('#form_data').serialize(), // 序列化后台数据，可以将csrf验证信息一同处理
+            success:  // 访问成功后（200）的回调函数
+                function (data) {
+                    if (data.status == 'success') {
+                        alert("注册成功，请登录");
+                        window.location.href = "{% url 'login' %}";
+                    } else if (data.status == 'fail') {
+                        $('#error_msg').text(data.msg);
+                    }
+                }
+        });
+        return false
+    })
+</script>
+</body>
+</html>

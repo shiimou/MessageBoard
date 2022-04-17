@@ -1,0 +1,315 @@
+@charset "UTF-8";
+/* CSS Document */
+
+.register {
+    text-align: center;
+}
+
+.container_in {
+    width: 430px;
+    height: 380px;
+    margin-left: 33%;
+    /*border-radius: 4px;*/
+    border: 1px solid;
+    border-color: #d6d6d6;
+    text-align: center;
+}
+
+.col_1 {
+    height: 60px;
+    line-height: 60px;
+    font-size: 16px;
+    font-family: "Apple Symbols";
+    font-weight: bold;
+    border-bottom: 1px solid;
+    border-color: #d6d6d6;
+    text-align: left;
+}
+
+.input_group {
+    margin: 30px 20px;
+}
+
+.btn_register {
+    background-color: #3678b7;
+    color: #fff;
+    width: 100px;
+}
+
+.btn_register:hover {
+    background-color: #45a7ff;
+    color: #fff;
+}
+
+.turn_link {
+    color: #3678b7;
+    /*取消下划线*/
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+.turn_link:hover {
+    color: #45a7ff;
+    text-decoration: none;
+}
+
+.error_msg {
+    float: right;
+    height: 12px;
+    font-size: 10px;
+    color: red;
+    margin-right: 5px;
+    /*display: none;*/
+}
+
+.main_info {
+    height: 100px;
+    text-align: center;
+
+}
+
+.main_info span {
+    font-size: 30px;
+    line-height: 100px;
+    color: #919191;
+}
+
+.content_top {
+    position: relative;
+    margin: 10px auto;
+    text-align: right;
+}
+
+.content_top span {
+    color: #3678b7;
+}
+
+.back_link {
+    background-color: #3678b7;
+    width: 100px;
+    height: 35px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #fff;
+}
+
+.back_link:hover {
+    background-color: #45a7ff;
+}
+
+.del_link {
+    background-color: #AF231C;
+    margin-right: 30px;
+}
+
+.del_link:hover {
+    background-color: #c9665b;
+}
+
+.modify_link {
+    background-color: #d1ba74;
+    margin-right: 30px;
+}
+
+.modify_link:hover {
+    background-color: #c29a7b;
+}
+
+.save_link {
+    background-color: #027a06;
+    margin-right: 30px;
+}
+
+.save_link:hover {
+    background-color: #12d313;
+}
+
+.message_list {
+    font-size: 20px;
+    font-weight: bold;
+    height: 30px;
+    line-height: 30px;
+    margin-left: 10px;
+}
+
+.textarea_ {
+    height: 220px;
+    width: 96%;
+    margin: 30px 20px;
+    /*margin-left: 2%;*/
+    /*min-height: 220px;*/
+    /*max-height: 304px;*/
+    overflow-y: hidden;
+    border-color: #c4c4c4;
+}
+
+.content_modify {
+    display: none;
+}
+
+/*分页样式*/
+.page {
+    clear: both;
+    margin: 20px 0 0 0;
+    text-align: center;
+}
+
+.page a {
+    display: inline-block;
+    font-family: Arial;
+    font-size: 13px;
+    border: #dbdbdb 1px solid;
+    padding: 4px 9px;
+    margin: 2px;
+    margin-bottom: 5px;
+    color: #3678b7;
+    text-decoration: none
+}
+
+.page a:hover, .page a:focus {
+    font-family: Arial;
+    font-size: 13px;
+    border: #3678b7 1px solid;
+    padding: 4px 9px;
+    color: #fff;
+    background-color: #3678b7;
+}
+
+.page .current {
+    font-family: Arial;
+    border: #3678b7 1px solid;
+    font-size: 13px;
+    padding: 5px 9px;
+    color: #fff;
+    margin: 2px;
+    background-color: #3678b7
+}
+
+/*comments*/
+
+.commentList {
+	padding-left: 6px;
+}
+
+.commentList .item {
+	list-style: none outside none;
+	margin-bottom: 6px;
+	margin-right: 6px;
+}
+
+.commentList .avatar {
+	border: 1px solid transparent;
+	float: left;
+}
+
+.comment-main {
+	position: relative;
+	margin-left: 64px;
+	border: 1px solid #dedede;
+	border-radius: 2px;
+	-webkit-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .1);
+	box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .1);
+	-webkit-transition: all .3s ease;
+	-moz-transition: all .3s ease;
+}
+
+.comment-main:hover {
+	-webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, .3)!important;
+	-moz-box-shadow: 0 2px 8px rgba(0, 0, 0, .3)!important;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, .3)!important;
+}
+
+.comment-main:before,
+.comment-main:after {
+	position: absolute;
+	top: 11px;
+	left: -16px;
+	right: 100%;
+	width: 0;
+	height: 0;
+	display: block;
+	content: " ";
+	border-color: transparent;
+	border-style: solid solid outset;
+	pointer-events: none
+}
+
+.comment-main:before {
+	border-right-color: #dedede;
+	border-width: 8px
+}
+
+.comment-main:after {
+	border-width: 7px;
+	border-right-color: #f8f8f8;
+	margin-top: 1px;
+	margin-left: 2px
+}
+
+.comment-header {
+	padding: 10px 15px;
+	background: #f8f8f8;
+	border-bottom: 1px solid #eee
+}
+
+.comment-title {
+	margin: 0 0 8px 0;
+	font-size: 1.6rem;
+	line-height: 1.2
+}
+
+.comment-meta {
+	font-size: 13px;
+	color: #999;
+	line-height: 1.2
+}
+
+.comment-meta a {
+	color: #999
+}
+
+.comment-author {
+	font-weight: 700;
+	color: #999
+}
+
+.comment-body {
+	padding: 15px;
+	overflow: hidden
+}
+
+.comment-body>:last-child {
+	margin-bottom: 0
+}
+
+.commentList .comment-flip .avatar {
+	float: right
+}
+
+.comment-flip .comment-main {
+	margin-left: 0;
+	margin-right: 64px
+}
+
+.comment-flip .comment-main:before {
+	border-left-color: #dedede;
+	border-right-color: transparent
+}
+
+.comment-flip .comment-main:before,
+.comment-flip .comment-main:after {
+	left: 100%;
+	position: absolute;
+	right: -16px
+}
+
+.comment-flip .comment-main:after {
+	border-left-color: #f8f8f8;
+	border-right-color: transparent;
+	margin-left: auto;
+	margin-right: 2px
+}
+
+
+/*comments*/

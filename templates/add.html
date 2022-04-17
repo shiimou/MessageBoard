@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}新增留言{% endblock %}
+
+{% block content %}
+<div>
+    <!-- 新增留言form表单 start -->
+    <form id="form_data">
+        <div class="input-group input_group">
+            <span class="input-group-addon">标题</span>
+            <input type="text" class="form-control" id="title" placeholder="请输入留言标题(长度5-50)"
+                    aria-describedby="sizing-addon2" name="title">
+        </div>
+        <textarea placeholder="请输入留言内容" id="input_content" class="textarea_" name="content"></textarea>
+        <span class="error_msg" id="error_msg" style="float: left"></span>
+        <div class="text-center" style="margin:30px auto;">
+            <input type="submit" id="btn_submit" class="btn btn_register save_link" value="保存"> <!--btn:去掉button自带阴影效果-->
+            <input type="submit" id="cancel_submit" class="btn back_link cancel-link" value="取消">
+        </div>
+        <!-- 用于处理csrf验证 -->
+        {% csrf_token %}
+    </form>
+    <!-- 新增留言form表单 end -->
+</div>
+ 
+<script>
+    // 留言富文本编辑器设置
+    CKEDITOR.replace('input_content', {
+        toolbar_Full: [
+            ['Styles', 'Format', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo', 'Redo'],
+            ['Link', 'Unlink', 'Anchor'],
+            ['Image', 'Flash', 'Table', 'HorizontalRule'],
+            ['TextColor', 'BGColor'],
+            ['Smiley', 'SpecialChar'],
+            ['CodeSnippet'], ['Source'],
+        ],
+        toolbar: 'Full',
+        height: 291,
+        width: 835,
+        filebrowserWindowWidth: 940,
+        filebrowserWindowHeight: 725,
+        extraPlugins: 'codesnippet',
+        // 处理图片上传
+        filebrowserImageUploadUrl: '/ckeditor/upload/',
+        // 图片上传时，显示浏览服务器按钮
+        filebrowserImageBrowseUrl : '/ckeditor/browse/',
+    });
+    // 取消按钮
+    $('#cancel_submit').on('click', function () {
+        window.location.href = "{% url 'home' %}";
+        return false
+    });
+    // 保存按钮
+    $('#form_data').submit(function () {
+        // 更新编辑器内容
+        for (instance in CKEDITOR.instances) {
+            CKEDITOR.instances[instance].updateElement();
+        }
+        if (CKEDITOR.instances.input_content.getData()) {
+            $.ajax({
+                cache: false,
+                type: 'POST',
+                url: "/addmessage/",
+                data: $('#form_data').serialize(),
+                success:
+                    function (data) {
+                        if (data.status == 'success') {
+                            console.log('success');
+                            alert('添加留言成功');
+                            window.location.href = "{% url 'home' %}";
+                        } else if (data.status == 'fail') {
+                            console.log('failed');
+                             alert('添加留言失败！请修改留言内容后重新保存！');
+                        }
+                    }
+            })
+        } else {
+            alert('留言内容不能为空!');
+        }
+        return false
+    });
+</script>
+
+{% endblock %}

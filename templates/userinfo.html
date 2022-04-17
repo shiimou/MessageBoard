@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}新增留言{% endblock %}
+
+{% block content %}
+<!-- 修改个人信息form表单 start -->
+<form id="form_data" role="form" enctype="multipart/form-data">
+    <!-- 用于处理csrf验证 -->
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="input_name"><span class="glyphicon glyphicon-user"></span>&nbsp;用户名</label>
+        <input id="input_name" class="form-control" name="username" type="text"
+                value="{{ request.user.username }}" required="required">
+    </div>
+    <div class="form-group">
+        <label for="input_face"><span
+                class="glyphicon glyphicon-picture"></span>&nbsp;头像</label>
+        <img id="user_img" style="width: 70px;" src="{{ MEDIA_URL }}{{ request.user.image }}"
+                class="img-responsive img-rounded">
+        <input id="upload_img" class="form-control" name="face" type="file" autofocus
+                style="display: none">
+    </div>
+    <div class="form-group">
+        <label for="input_info"><span class="glyphicon glyphicon-edit"></span>&nbsp;简介</label>
+        <textarea name="info" class="form-control" rows="8"
+                    id="input_info">{{ request.user.info }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-lg btn-success btn-block"
+            name="submit-btn">保存修改
+    </button>
+    {#                    <button type="submit" hidden id="submit"></button>#}
+</form>
+<!-- form表单 end -->
+
+<script src="../static/js/jquery-3.4.1.min.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
+<script>
+    // 点击图片响应隐藏按钮的点击
+    $('#user_img').on('click', function () {
+        $('#upload_img').click();
+    });
+    $("#upload_img").change(function () {
+        // 获取上传文件对象
+        var file = $(this)[0].files[0];
+        // 判断是否为图片
+        if (!/image\/\w+/.test(file.type)) {
+            alert("头像必须为图片文件！");
+            return false;
+        }
+        // 读取文件URL
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        // 阅读文件完成后触发的事件
+        reader.onload = function () {
+            // 读取的URL结果：this.result
+            $("#user_img").attr("src", this.result);
+        };
+    });
+
+    $("#form_data").submit(function () {
+        // input中有required属性时，不要将ajax直接绑定提交按钮的点击事件，会跳过输入框的验证，要绑定到form的submit方法上
+        var formData = new FormData($("#form_data")[0]);
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'userinfo' %}",
+            data: formData,
+            processData: false,// 不加会报错
+            contentType: false,// 不加会报错
+            success:
+                function (data) {
+                    if (data.status == 'success') {
+                        alert(data.msg);
+                        var obj = document.getElementById("username");
+                        var username = document.getElementById("input_name");
+                        obj.innerText = username.value;
+                    } else if (data.status == 'failed') {
+                        alert(data.msg);
+                    }
+                }
+        });
+        return false   // 防止路由转向，即不刷新页面
+    })
+</script>
+
+{% endblock %}

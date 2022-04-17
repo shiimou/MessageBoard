@@ -1,0 +1,72 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{% static 'img\favicon.ico' %}"> <!-- 浏览器标签栏显示图标 -->
+    <link href="{% static 'css\bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css\main.css' %}" rel="stylesheet">
+    <script src="{% static 'js\jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'js\bootstrap.min.js' %}"></script>
+    <script src="{% static 'ckeditor\ckeditor.js' %}"></script>
+    <script src="{% static 'prism\prism.js' %}"></script> <!--代码高亮-->
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3" style="height: calc(100vh);">
+            <div class="main_info">
+                <span>留言板</span>
+            </div>
+
+            <ul class="nav nav-pills nav-stacked nav-pills-stacked-example">
+                <!-- 通过路由进行判断，来决定左侧菜单的样式 -->
+                <li role="presentation" class="{% ifequal request.path|slice:'12' '/allmessages' %}active{% endifequal %}">
+                    <a href="{% url 'allmessages' %}">所有留言</a></li>
+                <li role="presentation" class="{% ifequal request.path|slice:'11' '/mymessages' %}active{% endifequal %}"><a
+                        href="{% url 'mymessages' %}">我的留言</a></li>
+                <li role="presentation" class="{% ifequal request.path|slice:'11' '/addmessage' %}active{% endifequal %}"><a
+                    href="{% url 'addmessage' %}">新增留言</a></li>
+                <li role="presentation" class="{% ifequal request.path|slice:'9' '/userinfo' %}active{% endifequal %}"><a
+                    href="{% url 'userinfo' %}">个人中心</a></li>
+
+            </ul>
+        </div>
+        <div class="col-md-9" style="height: calc(100vh);">
+            <div class="content_top">
+                欢迎你，
+                <span>{{ request.user.username }}</span>
+                <a href="{% url 'logout' %}" class="turn_link">注销登录</a>
+            </div>
+            <ol class="breadcrumb">
+                <li><a href="#" style="text-decoration: none;">
+                    <!-- 导航栏  -->
+                    {% if request.path == '/' %}
+                        所有留言
+                    {% endif %}
+                    {% ifequal request.path|slice:'12' '/allmessages' %}
+                        所有留言
+                    {% endifequal %}
+                    {% ifequal request.path|slice:'11' '/mymessages' %}
+                        我的留言
+                    {% endifequal %}
+                    {% ifequal request.path|slice:'11' '/addmessage' %}
+                        新增留言
+                    {% endifequal %}
+                    {% ifequal request.path|slice:'9' '/userinfo' %}
+                        个人中心
+                    {% endifequal %}
+                </a></li>
+            </ol>
+
+            {% block content %}
+            {% endblock %}
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
+        

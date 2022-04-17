@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}留言详情{% endblock %}
+
+{% block content %}
+
+<!--以下为留言的主要内容区域 start -->
+<div class="content_main">
+    <h3 class="text-center">
+        {{ message.title }}
+    </h3>
+    <div class="text-center" style="margin-bottom: 10px">
+        <span>作者：{{ message.author }}&ensp;&ensp;</span>
+        <span>创建时间：{{ message.create_time }} &ensp;&ensp;</span>
+        <span>点击数：{{ message.click_nums }} &ensp;&ensp;</span>
+        <span>评论数：<i id="comment_nums">{{ message.comment_nums }}</i> &ensp;&ensp;</span>
+    </div>
+    <div>
+        {{ message.content|safe }}
+    </div>
+    <div class="text-center" style="margin:30px auto;">
+        <!-- 如果是留言作者，显示修改、删除按钮 -->
+        {% ifequal request.user.username message.author.username  %}
+            <button onclick="modify_message();" title="修改" class="btn back_link modify_link">修改</button>
+            <button onclick="del_message();" title="删除" class="btn back_link del_link">删除</button>
+        {% endifequal %}
+    </div>
+    <!-- 评论 -->
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span>&nbsp;留言评论</h3>
+        </div>
+        <div class="panel-body">
+            <ol class="breadcrumb" style="margin-top:6px;">
+                <li>全部评论（
+                    <i id="comment_nums_">{% if message.comment_nums %}{{ message.comment_nums }}{% else %}0{% endif %}</i>
+                    ）</li>
+            </ol>
+            <form role="form" id="form_comment" style="margin-bottom:6px;">
+                <div class="form-group">
+                    <div>
+                        <input type="hidden" name="message_id" value="{{ message.id }}">
+                        <label for="input_content">内容</label>
+                        <!-- 消息模块 -->
+                        <div id="msg_alert" class="alert alert-success alert-dismissible" role="alert"
+                             style="display: none">
+                            <strong id="id_msg_suc"></strong>
+                        </div>
+                        <textarea name="content" id="comment_content"></textarea>
+                    </div>
+                    <div class="col-xs-12" id="error_content"></div>
+                </div>
+                <button type="submit" class="btn btn-success"><span
+                        class="glyphicon glyphicon-edit">提交评论</span>
+                </button>
+                {% csrf_token %}
+            </form>
+            <!-- 评论列表 -->
+            {% include "comments.html" %}
+        </div>
+    </div>
+</div>
+<!--留言的主要内容区域 end -->
+<!-- 留言修改区域 默认为隐藏 start -->
+<div class="content_modify">
+    <form id="form_data">
+        <!-- 用于处理csrf验证 -->
+        {% csrf_token %}
+        <div class="input-group input_group">
+            <span class="input-group-addon">标题</span>
+            <input type="text" class="form-control" id="title" value="{{ message.title }}"
+                   aria-describedby="sizing-addon2" name="title" required>
+        </div>
+        <textarea placeholder="请输入留言内容" id="input_content" name="content">{{ message.content|safe }}</textarea>
+        <span class="error_msg" id="error_msg" style="float: left"></span>
+        <div class="text-center" style="margin:30px auto;">
+            <input type="submit" id="btn_submit" class="btn btn_register save_link" value="保存">
+            <input type="button" id="cancel_submit" class="btn back_link cancel-link" value="取消">
+        </div>
+    </form>
+</div>
+<!-- 留言修改区域 默认为隐藏 end -->
+
+<script>
+    function del_message() {
+    // 删除操作
+    alert('删除留言成功!');
+    window.location.href = "/delmessage/?pk={{ message.id }}";
+    return false
+    };
+
+    function modify_message() {
+    // 修改操作
+    $('.content_main').css('display', 'none');
+    $('.content_modify').css('display', 'block');
+    };
+
+    // 留言富文本编辑器设置
+    CKEDITOR.replace('input_content', {
+        toolbar_Full: [
+        ['Styles', 'Format', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo', 'Redo'],
+        ['Link', 'Unlink', 'Anchor'],
+        ['Image', 'Flash', 'Table', 'HorizontalRule'],
+        ['TextColor', 'BGColor'],
+        ['Smiley', 'SpecialChar'],
+        ['CodeSnippet'], ['Source'],
+        ],
+        toolbar: 'Full',
+        height: 291,
+        width: 835,
+        filebrowserWindowWidth: 940,
+        filebrowserWindowHeight: 725,
+        extraPlugins: 'codesnippet',
+        // 处理图片上传
+        filebrowserImageUploadUrl: '/ckeditor/upload/',
+        // 图片上传时，显示浏览服务器按钮
+        filebrowserImageBrowseUrl: '/ckeditor/browse/',
+    });
+    // 评论输入框设置
+    CKEDITOR.replace('comment_content',{
+        toolbar: [['Smiley', 'Link', 'Unlink']],
+        resize_enabled: false,
+        height: 100,
+        removePlugins: 'elementspath',
+    });
+
+    // 取消按钮
+    $('#cancel_submit').on('click', function () {
+    $('.content_main').css('display', 'block');
+    $('.content_modify').css('display', 'none');
+    });
+    // 保存按钮
+    $('#form_data').submit(function () {
+        // 更新内容
+        for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+        }
+        // 提交表单
+        if (CKEDITOR.instances.input_content.getData()) {
+        $.ajax({
+            cache: false,
+            type: 'POST',
+            url: "/addmessage/?pk={{ message.id }}",
+            data: $('#form_data').serialize(),
+            success:
+                function (data) {
+                    if (data.status == 'success') {
+                        alert('修改留言成功！');
+                        window.location.href = "/detail/?pk={{ message.id }}";
+                    } else if (data.status == 'fail') {
+                        alert('修改留言失败！');
+                    }
+                }
+        })
+        } else {
+        alert('留言内容不能为空!');
+        }
+        return false
+    });
+// 评论提交处理
+    $('#form_comment').submit(function () {
+    // 重置消息
+    $('#id_msg_suc').text('');
+    $('#msg_alert').attr({
+    "style": "display: none"
+    });
+    if (CKEDITOR.instances.comment_content.getData()) {
+        var content = CKEDITOR.instances.comment_content.getData();
+        $('#comment_content').text(content);
+        $.ajax({
+            cache: false,
+            type: 'POST',
+            url: "{% url 'comment' %}",
+            data: $('#form_comment').serialize(),
+            success:
+                function (data) {
+                    if (data.status == 'success') {
+                        $('#id_msg_suc').text(data.msg);
+                        // 显示提示消息
+                        $('#msg_alert').attr({
+                            "class": "alert alert-success alert-dismissible",
+                            "style": "display: block"
+                        });
+                        // 将新增的评论添加到页面中
+                        $('#commentList').prepend('<li class="item cl">\n' +
+                            '                                    <a href="javascript:;">\n' +
+                            '                                        <i class="avatar size-L radius">\n' +
+                            '                                            <img alt="50x50" src="{{ MEDIA_URL }}{{ request.user.image }}"\n' +
+                            '                                                 class="img-circle" style="border:1px solid #abcdef;width: 50px;">\n' +
+                            '                                        </i>\n' +
+                            '                                    </a>\n' +
+                            '                                    <div class="comment-main">\n' +
+                            '                                        <header class="comment-header">\n' +
+                            '                                            <div class="comment-meta">\n' +
+                            '                                                <a class="comment-author"\n' +
+                            '                                                   href="javascript:;">{{ request.user.username }}</a>\n' +
+                            '                                                评论于\n' +
+                            '                                                <time title="2016-12-07 09:12:51"\n' +
+                            '                                                      datetime="2016-12-07 09:12:51">刚刚</time>\n' +
+                            '                                            </div>\n' +
+                            '                                        </header>\n' +
+                            '                                        <div class="comment-body">\n' +
+                            '                                            <p>{% autoescape off %}'+content+
+                                '{% endautoescape %}</p>\n' +
+                            '                                        </div>\n' +
+                            '                                    </div>\n' +
+                            '                                </li>');
+                        // 清空评论输入框
+                        CKEDITOR.instances.comment_content.setData('');
+                        // 更新评论总数
+                        $('#comment_nums').text(data.comment_nums);
+                        $('#comment_nums_').text(data.comment_nums);
+                    } else if (data.status == 'failed') {
+                        $('#id_msg_suc').text(data.msg);
+                        $('#msg_alert').attr({
+                            "class": "alert alert-danger alert-dismissible",
+                            "style": "display: block"
+                        });
+                    }
+                }
+        })
+    }
+    else {
+        $('#id_msg_suc').text("评论内容不能为空！");
+        $('#msg_alert').attr({
+            "class": "alert alert-danger alert-dismissible",
+            "style": "display: block"
+        });
+        }
+    return false
+    });
+
+</script>
+
+
+{% endblock %}
