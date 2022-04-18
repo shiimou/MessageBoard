@@ -37,12 +37,16 @@ class AddMessage(View):
         return render(request, 'add.html', {'username': user})
 
     def post(self, request):
-        # 获取前端form表单传过来的数据
-        title = request.POST.get('title', '')
-        info = request.POST.get('info', '')
-        content = request.POST.get('content', '')
-        id = request.GET.get('pk', '')  # 如果有id，说明不是新增留言，是修改留言
-        author = request.user.username  # 获取作者
+        articles_form = ArticlesForm(request.POST) 
+        if articles_form.is_valid():
+            # 获取前端form表单传过来的数据
+            title = request.POST.get('title', '')
+            content = request.POST.get('content', '')
+            id = request.GET.get('pk', '')  # 如果有id，说明不是新增留言，是修改留言
+            author = request.user.username  # 获取作者
+        else:
+            return HttpResponse(json.dumps({'status': 'failed', 'msg': '标题不能为空！'}),
+                                content_type='application/json')
 
         # 判断留言是否为空
         if not content:
@@ -53,7 +57,6 @@ class AddMessage(View):
             try:
                 articles = Articles.objects.get(id=id)
                 articles.title = title
-                articles.info = info
                 articles.content = content
                 articles.save()
                 return HttpResponse(json.dumps({"status": "success"}), content_type='application/json')
@@ -67,7 +70,6 @@ class AddMessage(View):
                 articles.title = title
                 articles.author = UserInfo.objects.get(username=author)
                 articles.create_time = datetime.now()
-                articles.info = info
                 articles.content = content
                 articles.save()
                 return HttpResponse(json.dumps({"status": "success"}), content_type='application/json')

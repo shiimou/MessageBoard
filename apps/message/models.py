@@ -16,7 +16,6 @@ class Articles(models.Model):
     title = models.CharField(verbose_name='标题', max_length=50)
     author = models.ForeignKey(UserInfo, on_delete=models.CASCADE, null=True, verbose_name='作者')
     create_time = models.DateTimeField(verbose_name='创建时间', default=datetime.now)
-    info = models.CharField(verbose_name='摘要', default='', max_length=100)
     content = RichTextUploadingField('留言内容', config_name='default')  # 富文本编辑器
     click_nums = models.IntegerField(verbose_name='点击数', default=0)
     comment_nums = models.IntegerField(verbose_name='评论数', default=0)

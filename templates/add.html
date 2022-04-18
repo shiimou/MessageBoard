@@ -22,7 +22,7 @@
     </form>
     <!-- 新增留言form表单 end -->
 </div>
- 
+
 <script>
     // 留言富文本编辑器设置
     CKEDITOR.replace('input_content', {
@@ -56,6 +56,21 @@
         for (instance in CKEDITOR.instances) {
             CKEDITOR.instances[instance].updateElement();
         }
+        //标题form表单验证
+        $.ajax({
+            url: "/addmessage/",  // 提交的路由
+            type: "POST",   // post方式
+            data: $('#form_data').serialize(), // 序列化后台数据，可以将csrf验证信息一同处理
+            success: function (data) {   // 访问成功后（200）的回调函数
+                if (data.status == 'success') {
+                    window.location.href = "{% url 'home' %}";
+                } else if (data.status == 'fail') {
+                    $('#error_msg').text(data.msg);
+                }else {
+                    alert('标题不能为空!');
+                }
+            },
+        });
         if (CKEDITOR.instances.input_content.getData()) {
             $.ajax({
                 cache: false,
@@ -80,5 +95,6 @@
         return false
     });
 </script>
+
 
 {% endblock %}
